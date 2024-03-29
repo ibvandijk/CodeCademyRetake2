@@ -24,6 +24,9 @@ public class StatisticsController implements Initializable {
     private Label lblTopWebcasts;
 
     @FXML
+    private Label lblAgeDistribution;
+
+    @FXML
     private Button btnBack;
 
     @Override
@@ -33,6 +36,10 @@ public class StatisticsController implements Initializable {
 
         // Load and display Statistics 5
         showTopWebcasts(null);
+
+        // Load and display new retake Statistics
+        showAgeDistribution(null);
+
     }
 
     @FXML
@@ -71,6 +78,17 @@ public class StatisticsController implements Initializable {
         } catch (IOException e) {
             
             e.printStackTrace();
+        }
+    }
+
+    @FXML
+    void showAgeDistribution(ActionEvent event) {
+        ObservableList<String> ageDistribution = StatisticsDAO.getAgeDistribution();
+
+        if (!ageDistribution.isEmpty()) {
+            lblAgeDistribution.setText(String.join("\n", ageDistribution));
+        } else {
+            lblAgeDistribution.setText("No data available");
         }
     }
 
