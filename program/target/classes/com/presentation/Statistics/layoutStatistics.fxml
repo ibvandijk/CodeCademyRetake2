@@ -25,6 +25,12 @@
 
             </children>
         </VBox>
+        <VBox layoutX="50.0" layoutY="350.0" prefHeight="200.0" prefWidth="750.0" spacing="10.0">
+            <children>
+                <Label text="Leeftijdsverdeling:" />
+                <Label fx:id="lblAgeDistribution" text="" />
+            </children>
+        </VBox>
         <Button fx:id="btnBack" layoutX="20.0" layoutY="20.0" mnemonicParsing="false"
             onAction="#backToHome" text="Back" />
     </children>
