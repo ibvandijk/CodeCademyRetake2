@@ -160,6 +160,11 @@
                      <Insets top="20.0" />
                   </HBox.margin>
                </Button>
+               <Button fx:id="btnMoveModule" mnemonicParsing="false" onAction="#handleButtonAction" prefHeight="27.0" prefWidth="140.0" text="Move Module">
+                  <HBox.margin>
+                     <Insets top="20.0" />
+                  </HBox.margin>
+               </Button>
             </children>
          </HBox>
       </children>
