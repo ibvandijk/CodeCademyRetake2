@@ -73,4 +73,6 @@ public class StatisticsController implements Initializable {
             e.printStackTrace();
         }
     }
+
+
 }
