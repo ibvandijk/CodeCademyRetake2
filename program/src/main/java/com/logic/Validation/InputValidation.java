@@ -75,4 +75,23 @@ public class InputValidation {
         return postalCode.trim().matches(postalCodeRegex);
     }
 
+    public static boolean isValidParticipantName(String name) {
+        if (name == null || name.trim().isEmpty()) {
+            return false;
+        }
+        
+        // Verwijdert leidende en volgende spaties en controleert dan op extra interne spaties.
+        if (!name.equals(name.trim()) || name.contains("  ")) {
+            return false;
+        }
+    
+        String[] parts = name.split("\\s+");
+        for (String part : parts) {
+            if (part.isEmpty() || !Character.isUpperCase(part.charAt(0)) || !part.substring(1).equals(part.substring(1).toLowerCase())) {
+                return false;
+            }
+        }
+        return true;
+    }
+
 }
