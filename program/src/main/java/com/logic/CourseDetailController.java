@@ -36,6 +36,9 @@ public class CourseDetailController {
     @FXML
     private Button btnAddModule, btnDeleteModule;
 
+    @FXML
+    private Label lblMaleStudents, lblFemaleStudents;
+
     private Course selectedCourse;
 
     @FXML
@@ -71,6 +74,12 @@ public class CourseDetailController {
     
         int studentsCompleted = CourseDAO.getStudentsCompletedForCourse(selectedCourse.getCourseName());
         lblStudentsCompleted.setText(String.valueOf(studentsCompleted));
+
+        int maleStudents = CourseDAO.getStudentsByGenderForCourse(course.getCourseName(), "M");
+        lblMaleStudents.setText("Mannelijke Studenten: " + maleStudents);
+    
+        int femaleStudents = CourseDAO.getStudentsByGenderForCourse(course.getCourseName(), "F");
+        lblFemaleStudents.setText("Vrouwelijke Studenten: " + femaleStudents);
     }
     
     private void configureTableView() {

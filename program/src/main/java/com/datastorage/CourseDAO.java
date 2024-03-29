@@ -308,4 +308,32 @@ public class CourseDAO {
             e.printStackTrace();
         }
     }
+
+    // Coursedetails Lookup per gender the amount of students registered to a course
+    public static int getStudentsByGenderForCourse(String courseName, String gender) {
+        System.out.println("Get Students by Gender for Course Called");
+    
+        int studentCount = 0;
+    
+        try {
+            Connection conn = SQLServerDatabase.getDatabase().getConnection();
+            String query =  
+                "SELECT COUNT(*) AS studentCount " +
+                "FROM Registration r " +
+                "JOIN Participant p ON r.EmailAddress = p.EmailAddress " +
+                "WHERE r.CourseName = ? AND p.Gender = ?";
+            PreparedStatement st = conn.prepareStatement(query);
+            st.setString(1, courseName);
+            st.setString(2, gender);
+            ResultSet rs = st.executeQuery();
+    
+            while (rs.next()) {
+                studentCount = rs.getInt("studentCount");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+        return studentCount;
+    }
 }

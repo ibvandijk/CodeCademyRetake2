@@ -43,6 +43,18 @@
                <Label fx:id="lblDifficulty" prefHeight="17.0" prefWidth="179.0" />
             </children>
          </HBox>
+                  <HBox spacing="5">
+            <children>
+               <Label text="Mannelijke Studenten:" />
+               <Label fx:id="lblMaleStudents" />
+            </children>
+         </HBox>
+         <HBox spacing="5">
+            <children>
+               <Label text="Vrouwelijke Studenten:" />
+               <Label fx:id="lblFemaleStudents" />
+            </children>
+         </HBox>
          <HBox prefHeight="66.0" prefWidth="255.0" spacing="5">
             <children>
                <VBox prefHeight="54.0" prefWidth="262.0">
