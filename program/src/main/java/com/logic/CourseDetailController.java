@@ -1,12 +1,17 @@
 package com.logic;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.VBox;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -29,12 +34,14 @@ public class CourseDetailController {
     private Label lblModuleTitle, lblModuleVersion, lblModuleDescription, lblContactPersonName, lblContactPersonEmail, lblAverageProgress;
     @FXML
     private Label lblStudentsCompleted;
+    @FXML
+    private ComboBox<String> cbDestinationCourseNames;
 
     @FXML
     private ComboBox<String> cbModuleNames;
 
     @FXML
-    private Button btnAddModule, btnDeleteModule;
+    private Button btnAddModule, btnDeleteModule, btnMoveModule;
 
     @FXML
     private Label lblMaleStudents, lblFemaleStudents;
@@ -49,6 +56,15 @@ public class CourseDetailController {
         if (event.getSource() == btnDeleteModule) {
             removeModuleFromCourse();
         } 
+        if (event.getSource() == btnMoveModule) {
+        Module selectedModule = tvModules.getSelectionModel().getSelectedItem();
+        if (selectedModule != null) {
+            showMoveModuleDialog(selectedModule.getModuleTitle());
+        } else {
+            Alert alert = new Alert(Alert.AlertType.WARNING, "Selecteer eerst een module om te verplaatsen.");
+            alert.showAndWait();
+        }
+    }
     }
 
     public void initialize() {
@@ -136,6 +152,54 @@ public class CourseDetailController {
         ObservableList<Module> modules = CourseDAO.getModulesForCourse(selectedCourse.getCourseName());
         cbModuleNames.setItems(FXCollections.observableArrayList(CourseDAO.getModuleNames()));
         tvModules.setItems(modules);
+    }
+
+    private void moveModuleToAnotherCourse(String moduleTitle, String destinationCourse) {
+        try {
+            CourseDAO.moveModuleToCourse(moduleTitle, destinationCourse);
+    
+            ObservableList<Module> modules = CourseDAO.getModulesForCourse(selectedCourse.getCourseName());
+            tvModules.setItems(modules);
+
+            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Module succesvol verplaatst naar " + destinationCourse + ".");
+            alert.showAndWait();
+        } catch (Exception e) {
+            Alert alert = new Alert(Alert.AlertType.ERROR, "Fout bij het verplaatsen van de module: " + e.getMessage());
+            alert.showAndWait();
+        }
+    }    
+    
+    private void showMoveModuleDialog(String selectedModule) {
+        Dialog<String> dialog = new Dialog<>();
+        dialog.setTitle("Module Verplaatsen");
+        dialog.setHeaderText("Selecteer de bestemmingscursus voor de module: " + selectedModule);
+    
+        DialogPane dialogPane = dialog.getDialogPane();
+        dialogPane.getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+    
+        ComboBox<String> cbDestinationCourses = new ComboBox<>();
+        if (selectedCourse != null) {
+            cbDestinationCourses.setItems(FXCollections.observableArrayList(
+                CourseDAO.getCourseNamesExcluding(selectedCourse.getCourseName())));
+        }
+    
+        VBox vbox = new VBox(new Label("Bestemmingscursus:"), cbDestinationCourses);
+        vbox.setSpacing(10);
+    
+        dialogPane.setContent(vbox);
+    
+        dialog.setResultConverter((ButtonType button) -> {
+            if (button == ButtonType.OK) {
+                return cbDestinationCourses.getSelectionModel().getSelectedItem();
+            }
+            return null;
+        });
+    
+        dialog.showAndWait().ifPresent((String destinationCourse) -> {
+            if (destinationCourse != null && !destinationCourse.isEmpty()) {
+                moveModuleToAnotherCourse(selectedModule, destinationCourse);
+            }
+        });
     }
     
 

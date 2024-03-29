@@ -336,4 +336,43 @@ public class CourseDAO {
         
         return studentCount;
     }
+
+    public static void moveModuleToCourse(String moduleTitle, String newCourseName) {
+        System.out.println("Move Module to Course Called");
+        try {
+            Connection conn = SQLServerDatabase.getDatabase().getConnection();
+            String query = "UPDATE Module SET CourseName = ? WHERE ModuleTitle = ?";
+            try (PreparedStatement updateModuleStm = conn.prepareStatement(query)) {
+                updateModuleStm.setString(1, newCourseName);
+                updateModuleStm.setString(2, moduleTitle);
+                updateModuleStm.executeUpdate();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static List<String> getCourseNamesExcluding(String excludedCourseName) {
+        System.out.println("Get Course Names Excluding Called");
+    
+        List<String> courseNames = new ArrayList<>();
+        Connection conn = SQLServerDatabase.getDatabase().getConnection();
+        String query = "SELECT CourseName FROM Course WHERE NOT CourseName = ?";
+    
+        try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setString(1, excludedCourseName);
+            
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    courseNames.add(rs.getString("CourseName"));
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    
+        return courseNames;
+    }
+    
+
 }
