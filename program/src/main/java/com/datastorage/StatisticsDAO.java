@@ -89,4 +89,38 @@ public class StatisticsDAO {
 
         return topWebcasts;
     }
+
+    public static ObservableList<String> getAgeDistribution() {
+        ObservableList<String> ageDistribution = FXCollections.observableArrayList();
+        // Aangepaste SQL-query voor SQL Server.
+        String query = "SELECT CASE " +
+               "WHEN DATEDIFF(year, Birthdate, GETDATE()) BETWEEN 10 AND 19 THEN '10-19' " +
+               "WHEN DATEDIFF(year, Birthdate, GETDATE()) BETWEEN 20 AND 29 THEN '20-29' " +
+               "WHEN DATEDIFF(year, Birthdate, GETDATE()) BETWEEN 30 AND 39 THEN '30-39' " +
+               "WHEN DATEDIFF(year, Birthdate, GETDATE()) BETWEEN 40 AND 49 THEN '40-49' " +
+               "ELSE '50+' END AS AgeGroup, COUNT(*) AS Count " +
+               "FROM Participant " +
+               "GROUP BY CASE " +
+               "WHEN DATEDIFF(year, Birthdate, GETDATE()) BETWEEN 10 AND 19 THEN '10-19' " +
+               "WHEN DATEDIFF(year, Birthdate, GETDATE()) BETWEEN 20 AND 29 THEN '20-29' " +
+               "WHEN DATEDIFF(year, Birthdate, GETDATE()) BETWEEN 30 AND 39 THEN '30-39' " +
+               "WHEN DATEDIFF(year, Birthdate, GETDATE()) BETWEEN 40 AND 49 THEN '40-49' " +
+               "ELSE '50+' END";
+
+    
+        try (Connection conn = SQLServerDatabase.getDatabase().getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(query);
+             ResultSet rs = pstmt.executeQuery()) {
+    
+            while (rs.next()) {
+                String ageGroup = rs.getString("ageGroup");
+                int count = rs.getInt("count");
+                ageDistribution.add(ageGroup + ": " + count);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return ageDistribution;
+    }
+    
 }
